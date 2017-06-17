@@ -1,0 +1,34 @@
+{
+  "name": "compose",
+  "version": "1.0.0",
+  "description": "lightweight functional library",
+  "main": "compose.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "npm run test-full && npm run clean && npm run min && npm run test-min",
+    "min": "uglifyjs ./compose.js -o ./compose.min.js --lint --compress --mangle -v",
+    "dev": "tape-watch test/full.js",
+    "test-full": "node test/full.js",
+    "test-min": "node test/min.js",
+    "clean": "rimraf ./compose.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aryailia/Compose.git"
+  },
+  "author": "aryailia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Aryailia/Compose/issues"
+  },
+  "homepage": "https://github.com/Aryailia/Compose#readme",
+  "devDependencies": {
+    "eslint": "^4.0.0",
+    "rimraf": "^2.6.1",
+    "tape": "^4.6.3",
+    "tape-watch": "^2.3.0",
+    "uglify-js": "^3.0.17"
+  }
+}
