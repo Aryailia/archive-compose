@@ -165,7 +165,7 @@
    * @param {...Object} [mixins] Objects to asorb the properties from
    * @returns {Object}
    */
-  Compose.shallowAssign = function (obj, mixins) {
+  Compose.mixin = function (obj, mixins) {
     var mixin, properties, j;
     var i = 0; // Skip <obj> but get all others
     var getSymbols = Object.getOwnPropertySymbols || false; // Only in ECMA6
@@ -183,6 +183,90 @@
     }
     return obj;
   };
+
+  // This is 
+  Compose.assign = function (target, source, depth) {
+    var getSymbols = Object.getOwnPropertySymbols || false; // Only in ECMA6
+    var properties = Object.getOwnPropertyNames(source)
+      .concat(getSymbols ? getSymbols(source) : []);
+    var index = -1;
+    var value, prop, temp, desc;
+
+    while (++index < properties.length) {
+      prop = properties[index];
+      temp = source[prop];
+      value = typeof temp === 'object'
+        ? (depth <= 0
+          ? temp.constructor()
+          : Compose.assign(temp.constructor(), temp))
+        : temp;
+      
+      desc = Object.getOwnPropertyDescriptor(source, prop);
+      desc.value = value;
+      Object.defineProperty(target, prop, desc);
+    }
+    return target;
+  };
+
+
+  /**
+   * Set defaults values for keys that can be copied over by the provided
+   * {overwrites} object. Will only copy the keys defined by {possiblities}
+   * and will issue an error.
+   * 
+   * Note: Mutates {overwrites} by deleting used entries and places in return
+   * Note: Shallow copies any objects in either {overwrites}
+   * 
+   * ({a: '', b: ['!']}, {a: 5}) => {a: 5, b: ['!']}
+   * // Array for .b is different refernce from outline
+   * ({a: '', b: ['!']}, {c: 5}) => SyntaxError
+   * 
+   * 
+   * @param {object} outlineDefaults The structure outline and defaults
+   * @param {object} overwrites The values to overwrite with
+   * @param {boolean} isStrict 
+   * @returns {object}
+   */
+  Compose.defaults = function (defaults, toSet, isStrict) {
+    var obj = Compose.assign(defaults.constructor(), defaults, 1);
+    Object.getOwnPropertyNames(toSet).forEach(function (key) {
+      if (!isStrict || obj.hasOwnProperty(key)) {
+        Object.defineProperty(obj, key,
+          Object.getOwnPropertyDescriptor(toSet, key));
+      } else {
+        throw new Error( 'defaults: \'' + key +
+          '\' is not a valid property for {toSet}');
+      }
+    });
+    /*var toAdd = specification == undefined ? {} : specification;
+    var obj = Object.create(null);
+    // If I want to change to non-mutating
+    //var check = Object.create(null); // To see if {overwrites} has extra keys
+    //Object.keys(overwrites).forEach(function (key) { check[key] = true; });
+    Object.keys(defaults).forEach(function (key) {
+      var base = toAdd.hasOwnProperty(key)
+        ? toAdd[key]
+        : defaults[key];
+      // Shallow copies any entries
+      // Note tha
+      obj[key] = typeof base === 'object'
+        ? Object.assign(base.constructor(), toAdd[key]) // One-level deep clone
+        : base; // Or just straight copy
+      //delete check[key]; // If I want to change to non-mutating
+      delete toAdd[key];
+    });
+
+    // See if any un-copied properties are left over
+    //if (Object.keys(check).length > 0) { // If I want to change to non-mutating
+    if (Object.keys(toAdd).length > 0) {
+      throw new Error('{overwrites} passed with invalid arguments' + toAdd);
+    }*/
+    return obj;
+  };
+
+  
+
+
   /*
   Compose.default = function (defaultOptions, options) {
     var settings = Object.create(null);

@@ -16,7 +16,21 @@ const tape = require('tape');
  * Add more failure cases unit tests
  * Memory independence between seqs
  */
+
 const unitTests = function ($) {
+  ///*
+  tape('Assign test that i am too lazy to finish', function (t) {
+    var template = {
+      a: '5',
+      b: [{}],
+    };
+    var df = $.defaults(template, { a: 1234,}, true);
+    df.b.push(123);
+    console.log(template);
+    console.log(df);
+    t.end();
+  });
+  
   tape('Range test', function (t) {
     t.deepEqual($.range(6), [0,1,2,3,4,5], 'range single');
     t.deepEqual($.range(-3,5), [-3,-2,-1,0,1,2,3,4], 'range double negpos');
@@ -409,7 +423,7 @@ const unitTests = function ($) {
     t.equal(5,5,'');
     t.end();
   });
+//*/
 };
 
 module.exports = unitTests;
-//*/
