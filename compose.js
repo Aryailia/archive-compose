@@ -143,7 +143,7 @@
    * @param {*} wrapping The 
    * @param {*} parameter The iteratee/predicate/argument to pass
    * @param {*} functor The logic to be push
-   * @returns {Object} The state created for any extra params
+   * @returns {object} The state created for any extra params
    */
   function _chainTo(wrapping, parameter, functor) {
     var state = Object.create(null);
@@ -223,8 +223,8 @@
    * ({a: '', b: ['!']}, {c: 5}) => SyntaxError
    * 
    * 
-   * @param {object} outlineDefaults The structure outline and defaults
-   * @param {object} overwrites The values to overwrite with
+   * @param {object} defaults The structure outline and defaults
+   * @param {object} toSet The values to overwrite with
    * @param {boolean} isStrict 
    * @returns {object}
    */
@@ -537,7 +537,7 @@
    * @category Lazy
    * @category Not Lazy
    * @category Sequential
-   * @param {number|Function} parameter 
+   * @param {number|function} parameter 
    * @todo definitely must check if works with general data types
    * @todo make random access?
    * might need to implement length
@@ -589,7 +589,7 @@
    * @category Chains
    * @category Lazy
    * @category Random Access
-   * @param {Function} iteratee
+   * @param {function} iteratee
    */
   Compose.foreach = function () {
 
@@ -634,7 +634,7 @@
    * @memberof Compose
    * @category Not Lazy
    * @category Sequential
-   * @param {Function(Object, Object):boolean} compare 
+   * @param {function(object, object):boolean} compare 
    */
   ComposeDelegate.sort = function (compare, searchType) {
     if (typeof compare !== 'function' || typeof searchType !== 'string') {
@@ -740,7 +740,7 @@
    * @memberof Compose
    * @category Lazy
    * @category Random Access
-   * @param {Array<Object>...} zipList
+   * @param {Array<object>...} zipList
    */
   Compose.zip = function () {
 
@@ -780,7 +780,6 @@
    * @private
    * @param {Array} base The array to modify.
    * @param {Array} target The array to append.
-   * @param {Number} count Max length of resulting array
    * @returns {Array} The new concatenated array
    */
   function _concatPush(base, target, fromRight) {
