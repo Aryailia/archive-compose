@@ -161,44 +161,45 @@
   }
 
   /**
-   * @param {Object} obj
-   * @param {...Object} [mixins] Objects to asorb the properties from
-   * @returns {Object}
+   * This assigns all the properties and symbols (if ES6+) of {source} to
+   * {target} up to {depth}
+   * 
+   * @example Shallow assign, depth < 1
+   * Compose.assign({a: 1, b: 2}, {b: [1,[2],3]}, 0) => {a: 1, b: []}
+   * 
+   * @example depth = 1
+   * Compose.assign({a: 1, b: 2}, {b: [1,[2],3]}, 1) => {a: 1, b: [1, [], 3]}
+   * 
+   * @example depth = 2
+   * Compose.assign({a: 1, b: 2}, {b: [1,[2],3]}, 1) => {a: 1, b: [1, [2], 3]}
+   * 
+   * @example
+   * Another important is to deep clone something, you can do:
+   * Compose.assign(objectToClone.constructor(), objectToClone, Math.INFINITY);
+   * 
+   * Note: Though it returns {target}, it also directly mutates {target}
+   * assigning properties and symbols
+   * Additionally this invokes .constructor() on children if they are objects
+   * 
+   * @param {object} target Object to assign values to
+   * @param {object} source Object from which to copy from
+   * @param {number} depth Depth to copy. Zero or less is a shallow copy
+   * @returns {object} target
    */
-  Compose.mixin = function (obj, mixins) {
-    var mixin, properties, j;
-    var i = 0; // Skip <obj> but get all others
-    var getSymbols = Object.getOwnPropertySymbols || false; // Only in ECMA6
-    while (++i < arguments.length) { // All mixins after <obj> in arguments
-      mixin = arguments[i]; // ECMA5 array access
-      properties = Object.getOwnPropertyNames(mixin)
-        .concat(getSymbols ? getSymbols(mixin) : []);
-      
-      // Copy properties over
-      j = -1;
-      while (++j < properties.length) {
-        Object.defineProperty(obj, properties[j],
-          Object.getOwnPropertyDescriptor(mixin, properties[j]));
-      }
-    }
-    return obj;
-  };
-
-  // This is 
   Compose.assign = function (target, source, depth) {
     var getSymbols = Object.getOwnPropertySymbols || false; // Only in ECMA6
-    var properties = Object.getOwnPropertyNames(source)
-      .concat(getSymbols ? getSymbols(source) : []);
+    var properties = Object.getOwnPropertyNames(source) // Array of properties
+      .concat(getSymbols ? getSymbols(source) : []); // and symbols
     var index = -1;
     var value, prop, temp, desc;
 
     while (++index < properties.length) {
       prop = properties[index];
       temp = source[prop];
-      value = typeof temp === 'object'
+      value = typeof temp === 'object' // Only invoke constructor if object
         ? (depth <= 0
-          ? temp.constructor()
-          : Compose.assign(temp.constructor(), temp))
+          ? temp.constructor() // Do not clone children
+          : Compose.assign(temp.constructor(), temp, depth - 1)) // do clone
         : temp;
       
       desc = Object.getOwnPropertyDescriptor(source, prop);

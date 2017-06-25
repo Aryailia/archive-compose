@@ -28,6 +28,7 @@ const unitTests = function ($) {
     df.b.push(123);
     console.log(template);
     console.log(df);
+    console.log($.assign({a: 1, b: 2}, {b: [1,[2],3]}, 2));
     t.end();
   });
   
