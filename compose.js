@@ -191,15 +191,16 @@
     var properties = Object.getOwnPropertyNames(source) // Array of properties
       .concat(getSymbols ? getSymbols(source) : []); // and symbols
     var index = -1;
+    var isDeeperCopy = depth != undefined && depth > 0;
     var value, prop, temp, desc;
 
     while (++index < properties.length) {
       prop = properties[index];
       temp = source[prop];
       value = typeof temp === 'object' // Only invoke constructor if object
-        ? (depth <= 0
-          ? temp.constructor() // Do not clone children
-          : Compose.assign(temp.constructor(), temp, depth - 1)) // do clone
+        ? (isDeeperCopy
+          ? Compose.assign(temp.constructor(), temp, depth - 1) // do clone
+          : temp.constructor()) // Do not clone children
         : temp;
       
       desc = Object.getOwnPropertyDescriptor(source, prop);
