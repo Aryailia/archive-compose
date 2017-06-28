@@ -196,9 +196,9 @@
 
     while (++index < properties.length) {
       prop = properties[index];
-      temp = source[prop];
-      value = typeof temp === 'object' // Only invoke constructor if object
-        ? (isDeeperCopy
+      temp = source[prop]; // temp != null tests both undefined and null
+      value = (temp != null && typeof temp === 'object')
+        ? (isDeeperCopy // Invoke constructor if possible children
           ? Compose.assign(temp.constructor(), temp, depth - 1) // do clone
           : temp.constructor()) // Do not clone children
         : temp;
